@@ -1,31 +1,51 @@
-// Token Types
-type TokenType =
-  | 'KEYWORD'
-  | 'IDENTIFIER'
-  | 'NUMBER'
-  | 'STRING'
-  | 'COLON'
-  | 'LBRACKET'
-  | 'RBRACKET'
-  | 'DASH';
+// src/lexer.ts
+import { Token, TokenType } from './token'; 
 
-// Token Rule Interface
 interface Rule {
   regex: RegExp;
   type: TokenType | null;
 }
 
-// Lexer Rules
 const RULES: Rule[] = [
   { regex: /^\s+/, type: null },
-  { regex: /^(BEAT|BPM|LOAD|TRACK|LOOP|SYNC|PLAY)\b/, type: 'KEYWORD' },
-  { regex: /^[a-zA-Z_][a-zA-Z0-9_]*\b/, type: 'IDENTIFIER' },
-  { regex: /^\d+\b/, type: 'NUMBER' },
-  { regex: /^".*?"/, type: 'STRING' },
+  { regex: /^(BEAT|BPM|LOOP|TRACK|PLAY|REST|SYNC|LOAD)\b/, type: 'KEYWORD' },
+  { regex: /^[a-zA-Z_]\w*/, type: 'IDENTIFIER' },
+  { regex: /^\d+(\.\d+)?/, type: 'NUMBER' },
+  { regex: /^"[^"]*"/, type: 'STRING' },
   { regex: /^:/, type: 'COLON' },
   { regex: /^\[/, type: 'LBRACKET' },
   { regex: /^\]/, type: 'RBRACKET' },
   { regex: /^--/, type: 'DASH' }
 ];
 
-export default RULES;
+
+export function tokenize(input: string): Token[] {
+  const tokens: Token[] = [];
+  let workingInput = input; 
+
+  while (workingInput.length > 0) {
+    let matched = false;
+
+    for (const rule of RULES) {
+      const match = workingInput.match(rule.regex);
+
+      if (match) {
+        matched = true;
+        if (rule.type) {
+          tokens.push({
+            type: rule.type,
+            value: match[0]
+          });
+        }
+        workingInput = workingInput.slice(match[0].length);
+        break;
+      }
+    }
+
+    if (!matched) {
+      throw new Error(`Unexpected character: ${workingInput[0]}`);
+    }
+  }
+
+  return tokens;
+}
