@@ -1,6 +1,18 @@
 // src/lexer.ts
 import { Token, TokenType } from './token'; 
 
+// Token Types
+type TokenType =
+  | 'KEYWORD'
+  | 'IDENTIFIER'
+  | 'NUMBER'
+  | 'STRING'
+  | 'COLON'
+  | 'LBRACKET'
+  | 'RBRACKET'
+  | 'DASH';
+
+//Token Rule Interfeace
 interface Rule {
   regex: RegExp;
   type: TokenType | null;
