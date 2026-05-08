@@ -1,18 +1,7 @@
 // src/lexer.ts
 import { Token, TokenType } from './token'; 
 
-// Token Types
-type TokenType =
-  | 'KEYWORD'
-  | 'IDENTIFIER'
-  | 'NUMBER'
-  | 'STRING'
-  | 'COLON'
-  | 'LBRACKET'
-  | 'RBRACKET'
-  | 'DASH';
-
-//Token Rule Interfeace
+// Token Rule Interfaace
 interface Rule {
   regex: RegExp;
   type: TokenType | null;
@@ -29,7 +18,6 @@ const RULES: Rule[] = [
   { regex: /^\]/, type: 'RBRACKET' },
   { regex: /^--/, type: 'DASH' }
 ];
-
 
 export function tokenize(input: string): Token[] {
   const tokens: Token[] = [];
